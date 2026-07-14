@@ -18,6 +18,8 @@ import { Colors } from "../../constants/colors";
 import { Spacing } from "../../constants/spacing";
 import { Typography } from "../../constants/typography";
 import { Theme } from "../../constants/theme";
+import { login } from "../../services/auth/authService";
+import { Alert } from "react-native";
 
 interface LoginErrors {
   email?: string;
@@ -30,7 +32,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<LoginErrors>({});
 
-  const handleLogin = () => {
+const handleLogin = async () => {
   const validationErrors = validateLogin(email, password);
 
   if (Object.keys(validationErrors).length > 0) {
@@ -38,12 +40,59 @@ export default function LoginScreen() {
     return;
   }
 
-  setErrors({});
+  try {
+    setLoading(true);
 
-  console.log("Login form is valid", {
-    email,
-    password,
-  });
+    await login(
+      email.trim(),
+      password
+    );
+
+    Alert.alert(
+      "Welcome 🎉",
+      "Login Successful!"
+    );
+
+    router.replace("/(tabs)");
+
+    console.log("User Logged In");
+
+  } catch (error: any) {
+
+    let message = "Login failed.";
+
+    switch (error.code) {
+
+      case "auth/user-not-found":
+        message = "No account found.";
+        break;
+
+      case "auth/wrong-password":
+        message = "Incorrect password.";
+        break;
+
+      case "auth/invalid-credential":
+        message =
+          "Invalid email or password.";
+        break;
+
+      case "auth/invalid-email":
+        message =
+          "Invalid email address.";
+        break;
+
+      default:
+        message = error.message;
+    }
+
+    Alert.alert(
+      "Login Failed",
+      message
+    );
+
+  } finally {
+    setLoading(false);
+  }
 };
 
   return (

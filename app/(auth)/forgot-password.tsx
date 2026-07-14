@@ -18,6 +18,8 @@ import { Spacing } from "../../constants/spacing";
 import { Typography } from "../../constants/typography";
 import { Theme } from "../../constants/theme";
 import { validateForgotPassword } from "../../utils/validation";
+import { resetPassword } from "../../services/auth/authService";
+import { Alert } from "react-native";
 
 interface ForgotPasswordErrors {
   email?: string;
@@ -28,7 +30,7 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleResetPassword = () => {
+const handleResetPassword = async () => {
   const validationErrors = validateForgotPassword(email);
 
   if (Object.keys(validationErrors).length > 0) {
@@ -36,11 +38,41 @@ export default function ForgotPasswordScreen() {
     return;
   }
 
-  setErrors({});
+  try {
+    setLoading(true);
 
-  console.log("Forgot password form is valid", {
-    email,
-  });
+    await resetPassword(email.trim());
+
+    Alert.alert(
+      "Email Sent 📧",
+      "Password reset link has been sent to your email."
+    );
+
+    router.replace("/(auth)/login");
+
+  } catch (error: any) {
+
+    let message = "Failed to send reset email.";
+
+    switch (error.code) {
+
+      case "auth/user-not-found":
+        message = "No account found with this email.";
+        break;
+
+      case "auth/invalid-email":
+        message = "Invalid email address.";
+        break;
+
+      default:
+        message = error.message;
+    }
+
+    Alert.alert("Error", message);
+
+  } finally {
+    setLoading(false);
+  }
 };
 
   return (
