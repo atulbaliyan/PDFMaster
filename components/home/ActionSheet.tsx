@@ -15,9 +15,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import { Typography } from "../../constants/typography";
 import { Spacing } from "../../constants/spacing";
+import { pickPDF } from "../../services/pdf/pdfPicker";
+import { Alert } from "react-native";
+import { DocumentPickerAsset } from "expo-document-picker";
 
-const ActionSheet = forwardRef<BottomSheetModal>(
-  (props, ref) => {
+interface ActionSheetProps {
+  onPDFSelected: (pdf: DocumentPickerAsset) => void;
+}
+
+const ActionSheet = forwardRef<BottomSheetModal,ActionSheetProps>(({ onPDFSelected }, ref) => 
+  {
     const snapPoints = useMemo(
       () => ["45%"],
       []
@@ -33,7 +40,19 @@ const ActionSheet = forwardRef<BottomSheetModal>(
             Choose Action
           </Text>
 
-          <Pressable style={styles.item}>
+          <Pressable
+  style={styles.item}
+  onPress={async () => {
+ const pdf = await pickPDF();
+
+if (!pdf) return;
+
+Alert.alert("Selected PDF", pdf.name);
+
+onPDFSelected(pdf);
+
+  }}
+  >
             <Ionicons
               name="document-text-outline"
               size={24}

@@ -7,13 +7,28 @@ import SearchBar from "../../components/home/SearchBar";
 import PDFCard from "../../components/home/PDFCard";
 import { Text } from "react-native";
 import FloatingButton from "../../components/home/FloatingButton";
-import { useRef } from "react";
+import { useRef ,useEffect ,useState} from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import ActionSheet from "../../components/home/ActionSheet";
+import { PDFFile } from "../../types/pdf";
+import { savePDFs, loadPDFs } from "../../services/storage/pdfStorage";
+import { formatFileSize } from "../../utils/formatFileSize";
+
 
 export default function HomeScreen() {
-  const bottomSheetRef =
-  useRef<BottomSheetModal>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [pdfs, setPdfs] = useState<PDFFile[]>([]);
+  useEffect(() => {
+  async function getPDFs() {
+    const storedPDFs = await loadPDFs();
+    setPdfs(storedPDFs);
+  }
+
+  getPDFs();
+}, []);
+useEffect(() => {
+  savePDFs(pdfs);
+}, [pdfs]);
   return (
     <SafeAreaView style={styles.container}>
       
@@ -31,36 +46,46 @@ export default function HomeScreen() {
 
   Recent PDFs
 </Text>
+{pdfs.map((pdf) => (
+  <PDFCard
+    key={pdf.id}
+    title={pdf.name}
+    size={formatFileSize(pdf.size)}
+    date={pdf.date}
+  />
+))}
 
-<PDFCard
-  title="Resume.pdf"
-  size="2.4 MB"
-  date="Today"
-/>
 
-<PDFCard
-  title="College Notes.pdf"
-  size="6.2 MB"
-  date="Yesterday"
-/>
-
-<PDFCard
-  title="Invoice.pdf"
-  size="850 KB"
-  date="3 Jul"
-/>
 
 
 {/* Floating Button and Action Sheet */}
 <FloatingButton
   onPress={() => {
+    console.log("Opening Sheet 🚀");
     bottomSheetRef.current?.present();
   }}
 />
-<ActionSheet ref={bottomSheetRef} />
 
+<ActionSheet
+  ref={bottomSheetRef}
+  onPDFSelected={(pdf) => {
+    console.log("Home received:", pdf);
 
-    </SafeAreaView>
+    setPdfs((prev) => [
+      {
+        id: Date.now().toString(),
+        name: pdf.name,
+        uri: pdf.uri,
+        size: pdf.size ?? 0,
+        date: "Today",
+      },
+      ...prev,
+    ]);
+  }}
+/>
+
+   
+   </SafeAreaView>
   );
 }
 
