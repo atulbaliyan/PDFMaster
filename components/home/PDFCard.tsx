@@ -10,6 +10,7 @@ interface PDFCardProps {
   title: string;
   size: string;
   date: string;
+  onPress?: () => void;
   onLongPress?: () => void;
 }
 
@@ -17,11 +18,19 @@ export default function PDFCard({
   title,
   size,
   date,
+  onPress,
   onLongPress,
 }: PDFCardProps) {
+
+  
   return (
+
 <Pressable
   style={styles.card}
+  onPress={() => {
+    console.log("PDF Card Pressed");
+    onPress?.();
+  }}
   onLongPress={onLongPress}
   delayLongPress={500}
 >

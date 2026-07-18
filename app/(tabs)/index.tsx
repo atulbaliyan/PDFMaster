@@ -11,6 +11,7 @@ import ActionSheet from "../../components/home/ActionSheet";
 import { PDFFile } from "../../types/pdf";
 import { savePDFs, loadPDFs } from "../../services/storage/pdfStorage";
 import { formatFileSize } from "../../utils/formatFileSize";
+import { router } from "expo-router";
 
 
 export default function HomeScreen() {
@@ -70,11 +71,20 @@ const deletePDF = (id: string) => {
   Recent PDFs
 </Text>
 {pdfs.map((pdf) => (
-  <PDFCard
+ <PDFCard
   key={pdf.id}
   title={pdf.name}
   size={formatFileSize(pdf.size)}
   date={pdf.date}
+  onPress={() =>
+    router.push({
+      pathname: "/pdf/viewer",
+      params: {
+        uri: pdf.uri,
+        name: pdf.name,
+      },
+    })
+  }
   onLongPress={() => deletePDF(pdf.id)}
 />
 ))}
