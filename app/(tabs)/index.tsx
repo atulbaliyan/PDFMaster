@@ -1,11 +1,9 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
-
+import { StyleSheet, Text, Alert } from "react-native";
 import HomeHeader from "../../components/home/HomeHeader";
 import { Colors } from "../../constants/colors";
 import SearchBar from "../../components/home/SearchBar";
 import PDFCard from "../../components/home/PDFCard";
-import { Text } from "react-native";
 import FloatingButton from "../../components/home/FloatingButton";
 import { useRef ,useEffect ,useState} from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -26,9 +24,34 @@ export default function HomeScreen() {
 
   getPDFs();
 }, []);
+
+
 useEffect(() => {
   savePDFs(pdfs);
 }, [pdfs]);
+
+
+const deletePDF = (id: string) => {
+  Alert.alert(
+    "Delete PDF",
+    "Are you sure you want to delete this PDF?",
+    [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          setPdfs((prev) => prev.filter((pdf) => pdf.id !== id));
+        },
+      },
+    ]
+  );
+};
+
+
   return (
     <SafeAreaView style={styles.container}>
       
@@ -48,11 +71,12 @@ useEffect(() => {
 </Text>
 {pdfs.map((pdf) => (
   <PDFCard
-    key={pdf.id}
-    title={pdf.name}
-    size={formatFileSize(pdf.size)}
-    date={pdf.date}
-  />
+  key={pdf.id}
+  title={pdf.name}
+  size={formatFileSize(pdf.size)}
+  date={pdf.date}
+  onLongPress={() => deletePDF(pdf.id)}
+/>
 ))}
 
 

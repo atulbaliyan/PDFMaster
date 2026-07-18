@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Colors } from "../../constants/colors";
@@ -10,16 +10,22 @@ interface PDFCardProps {
   title: string;
   size: string;
   date: string;
+  onLongPress?: () => void;
 }
 
 export default function PDFCard({
   title,
   size,
   date,
+  onLongPress,
 }: PDFCardProps) {
   return (
-    <View style={styles.card}>
-      <View style={styles.iconContainer}>
+<Pressable
+  style={styles.card}
+  onLongPress={onLongPress}
+  delayLongPress={500}
+>
+        <View style={styles.iconContainer}>
         <Ionicons
           name="document-text"
           size={30}
@@ -40,12 +46,15 @@ export default function PDFCard({
         </Text>
       </View>
 
+
+    
+
       <Ionicons
         name="chevron-forward"
         size={22}
         color={Colors.textSecondary}
       />
-    </View>
+    </Pressable>
   );
 }
 
