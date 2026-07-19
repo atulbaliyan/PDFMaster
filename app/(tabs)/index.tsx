@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Text, Alert } from "react-native";
+import { StyleSheet, Text, Alert, FlatList } from "react-native";
 import HomeHeader from "../../components/home/HomeHeader";
 import { Colors } from "../../constants/colors";
 import SearchBar from "../../components/home/SearchBar";
@@ -11,7 +11,11 @@ import ActionSheet from "../../components/home/ActionSheet";
 import { PDFFile } from "../../types/pdf";
 import { savePDFs, loadPDFs } from "../../services/storage/pdfStorage";
 import { formatFileSize } from "../../utils/formatFileSize";
+import { formatDate } from "../../utils/formatDate";
 import { router } from "expo-router";
+import RenameModal from "../../components/home/RenameModal";
+
+console.log("formatDate =", formatDate);
 
 
 export default function HomeScreen() {
@@ -31,22 +35,53 @@ useEffect(() => {
   savePDFs(pdfs);
 }, [pdfs]);
 
+const [renameVisible, setRenameVisible] = useState(false);
+const [selectedPDF, setSelectedPDF] = useState<PDFFile | null>(null);
 
-const deletePDF = (id: string) => {
+const showPDFOptions = (id: string) => {
   Alert.alert(
-    "Delete PDF",
-    "Are you sure you want to delete this PDF?",
+    "PDF Options",
+    "What would you like to do?",
     [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
+     {
+        text: "Rename",
+        onPress: () => {
+        const pdf = pdfs.find((item) => item.id === id);
+
+        if (!pdf) return;
+
+        setSelectedPDF(pdf);
+        setRenameVisible(true);
+  },
+},
       {
         text: "Delete",
         style: "destructive",
         onPress: () => {
-          setPdfs((prev) => prev.filter((pdf) => pdf.id !== id));
+          Alert.alert(
+            "Delete PDF",
+            "Are you sure you want to delete this PDF?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "Delete",
+                style: "destructive",
+                onPress: () => {
+                  setPdfs((prev) =>
+                    prev.filter((pdf) => pdf.id !== id)
+                  );
+                },
+              },
+            ]
+          );
         },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
       },
     ]
   );
@@ -56,38 +91,49 @@ const deletePDF = (id: string) => {
   return (
     <SafeAreaView style={styles.container}>
       
-      <HomeHeader userName="Atul" />
       
+      
+     <FlatList
+  data={pdfs}
+  keyExtractor={(item) => item.id}
+  ListHeaderComponent={
+    <>
+      <HomeHeader userName="Atul" />
+
       <SearchBar />
+
       <Text
-  style={{
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 16,
-  }}
->
-
-
-  Recent PDFs
-</Text>
-{pdfs.map((pdf) => (
- <PDFCard
-  key={pdf.id}
-  title={pdf.name}
-  size={formatFileSize(pdf.size)}
-  date={pdf.date}
-  onPress={() =>
-    router.push({
-      pathname: "/pdf/viewer",
-      params: {
-        uri: pdf.uri,
-        name: pdf.name,
-      },
-    })
+        style={{
+          fontSize: 20,
+          fontWeight: "700",
+          marginBottom: 16,
+        }}
+      >
+        Recent PDFs
+      </Text>
+    </>
   }
-  onLongPress={() => deletePDF(pdf.id)}
+  renderItem={({ item }) => (
+    <PDFCard
+      title={item.name}
+      size={formatFileSize(item.size)}
+      date={item.date}
+      onPress={() =>
+        router.push({
+          pathname: "/pdf/viewer",
+          params: {
+            uri: item.uri,
+            name: item.name,
+          },
+        })
+      }
+      onLongPress={() => showPDFOptions(item.id)}
+    />
+  )}
+  contentContainerStyle={{
+    paddingBottom: 120,
+  }}
 />
-))}
 
 
 
@@ -111,11 +157,44 @@ const deletePDF = (id: string) => {
         name: pdf.name,
         uri: pdf.uri,
         size: pdf.size ?? 0,
-        date: "Today",
+        date: formatDate(Date.now()),
       },
       ...prev,
     ]);
   }}
+/>
+
+
+<RenameModal
+  visible={renameVisible}
+  currentName={selectedPDF?.name ?? ""}
+  onClose={() => {
+    setRenameVisible(false);
+    setSelectedPDF(null);
+  }}
+  onSave={(newName) => {
+  if (!selectedPDF) return;
+
+  // Prevent empty names
+  if (!newName.trim()) {
+    Alert.alert("Invalid Name", "PDF name cannot be empty.");
+    return;
+  }
+
+  setPdfs((prev) =>
+    prev.map((pdf) =>
+      pdf.id === selectedPDF.id
+        ? {
+            ...pdf,
+            name: newName.trim(),
+          }
+        : pdf
+    )
+  );
+
+  setRenameVisible(false);
+  setSelectedPDF(null);
+}}
 />
 
    

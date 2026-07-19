@@ -1,17 +1,7 @@
-import {
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-
-import { forwardRef, useMemo } from "react";
-import {
-  StyleSheet,
-  Text,
-  Pressable,
-} from "react-native";
-
+import {BottomSheetModal, BottomSheetView,} from "@gorhom/bottom-sheet";
+import { forwardRef, useMemo, useRef, useImperativeHandle } from "react";
+import {  StyleSheet,Text,Pressable,} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
 import { Colors } from "../../constants/colors";
 import { Typography } from "../../constants/typography";
 import { Spacing } from "../../constants/spacing";
@@ -23,16 +13,18 @@ interface ActionSheetProps {
   onPDFSelected: (pdf: DocumentPickerAsset) => void;
 }
 
-const ActionSheet = forwardRef<BottomSheetModal,ActionSheetProps>(({ onPDFSelected }, ref) => 
-  {
+const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
+  ({ onPDFSelected }, ref) => {
+
+    const modalRef = useRef<BottomSheetModal>(null);
+
+    useImperativeHandle(ref, () => modalRef.current!);  
     const snapPoints = useMemo(
-      () => ["45%"],
-      []
-    );
+      () => ["45%"],[]);
 
     return (
-      <BottomSheetModal
-        ref={ref}
+     <BottomSheetModal
+       ref={modalRef}
         snapPoints={snapPoints}
       >
         <BottomSheetView style={styles.container}>
@@ -43,15 +35,20 @@ const ActionSheet = forwardRef<BottomSheetModal,ActionSheetProps>(({ onPDFSelect
           <Pressable
   style={styles.item}
   onPress={async () => {
- const pdf = await pickPDF();
+  // Close the bottom sheet first
+  modalRef.current?.dismiss();
 
-if (!pdf) return;
+  // Give the dismiss animation a moment to start
+  setTimeout(async () => {
+    const pdf = await pickPDF();
 
-Alert.alert("Selected PDF", pdf.name);
+    if (!pdf) return;
 
-onPDFSelected(pdf);
+    Alert.alert("Selected PDF", pdf.name);
 
-  }}
+    onPDFSelected(pdf);
+  }, 250);
+}}
   >
             <Ionicons
               name="document-text-outline"
