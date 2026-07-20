@@ -14,12 +14,15 @@ import { formatFileSize } from "../../utils/formatFileSize";
 import { formatDate } from "../../utils/formatDate";
 import { router } from "expo-router";
 import RenameModal from "../../components/home/RenameModal";
+import { sharePDF } from "../../services/share/sharePDF";
+import PDFOptionsSheet from "../../components/home/PDFOptionsSheet";
 
 console.log("formatDate =", formatDate);
 
 
 export default function HomeScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const pdfOptionsSheetRef = useRef<BottomSheetModal>(null);
   const [pdfs, setPdfs] = useState<PDFFile[]>([]);
   useEffect(() => {
   async function getPDFs() {
@@ -41,53 +44,16 @@ const [renameVisible, setRenameVisible] = useState(false);
 const [selectedPDF, setSelectedPDF] = useState<PDFFile | null>(null);
 
 const showPDFOptions = (id: string) => {
-  Alert.alert(
-    "PDF Options",
-    "What would you like to do?",
-    [
-     {
-        text: "Rename",
-        onPress: () => {
-        const pdf = pdfs.find((item) => item.id === id);
+  const pdf = pdfs.find((item) => item.id === id);
 
-        if (!pdf) return;
+  if (!pdf) return;
 
-        setSelectedPDF(pdf);
-        setRenameVisible(true);
-  },
-},
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          Alert.alert(
-            "Delete PDF",
-            "Are you sure you want to delete this PDF?",
-            [
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-              {
-                text: "Delete",
-                style: "destructive",
-                onPress: () => {
-                  setPdfs((prev) =>
-                    prev.filter((pdf) => pdf.id !== id)
-                  );
-                },
-              },
-            ]
-          );
-        },
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]
-  );
+  setSelectedPDF(pdf);
+
+  pdfOptionsSheetRef.current?.present();
 };
+
+
 
 const filteredPDFs = pdfs.filter((pdf) =>
   pdf.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
@@ -189,6 +155,59 @@ console.log("Filtered:", filteredPDFs.map((p) => p.name));
     ]);
   }}
 />
+
+
+<PDFOptionsSheet
+  ref={pdfOptionsSheetRef}
+  onRename={() => {
+    if (!selectedPDF) return;
+
+    pdfOptionsSheetRef.current?.dismiss();
+
+    setTimeout(() => {
+      setRenameVisible(true);
+    }, 250);
+  }}
+  onShare={async () => {
+    if (!selectedPDF) return;
+
+    pdfOptionsSheetRef.current?.dismiss();
+
+    setTimeout(async () => {
+      await sharePDF(selectedPDF.uri);
+    }, 250);
+  }}
+  onDelete={() => {
+  if (!selectedPDF) return;
+
+  pdfOptionsSheetRef.current?.dismiss();
+
+  setTimeout(() => {
+    Alert.alert(
+      "Delete PDF",
+      "Are you sure you want to delete this PDF?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setPdfs((prev) =>
+              prev.filter(
+                (pdf) => pdf.id !== selectedPDF.id
+              )
+            );
+          },
+        },
+      ]
+    );
+  }, 250);
+}}
+/>
+
 
 
 <RenameModal
