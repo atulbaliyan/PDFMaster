@@ -5,7 +5,15 @@ import { Colors } from "../../constants/colors";
 import { Spacing } from "../../constants/spacing";
 import { Theme } from "../../constants/theme";
 
-export default function SearchBar() {
+interface SearchBarProps {
+  value: string;
+  onChangeText: (text: string) => void;
+}
+
+export default function SearchBar({
+  value,
+  onChangeText,
+}: SearchBarProps) {
   return (
     <View style={styles.container}>
       <Ionicons
@@ -14,11 +22,16 @@ export default function SearchBar() {
         color={Colors.textSecondary}
       />
 
-      <TextInput
-        placeholder="Search PDFs..."
-        placeholderTextColor={Colors.textSecondary}
-        style={styles.input}
-      />
+     <TextInput
+  value={value}
+  onChangeText={(text) => {
+    console.log("Typed:", text);
+    onChangeText(text);
+  }}
+  placeholder="Search PDFs..."
+  placeholderTextColor={Colors.textSecondary}
+  style={styles.input}
+/>
     </View>
   );
 }

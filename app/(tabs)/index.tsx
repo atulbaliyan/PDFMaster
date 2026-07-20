@@ -35,6 +35,8 @@ useEffect(() => {
   savePDFs(pdfs);
 }, [pdfs]);
 
+const [searchQuery, setSearchQuery] = useState("");
+
 const [renameVisible, setRenameVisible] = useState(false);
 const [selectedPDF, setSelectedPDF] = useState<PDFFile | null>(null);
 
@@ -87,6 +89,15 @@ const showPDFOptions = (id: string) => {
   );
 };
 
+const filteredPDFs = pdfs.filter((pdf) =>
+  pdf.name.toLowerCase().includes(searchQuery.toLowerCase().trim())
+);
+
+console.log("Search:", searchQuery);
+console.log("PDF Names:", pdfs.map((p) => p.name));
+console.log("Filtered:", filteredPDFs.map((p) => p.name));
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,13 +105,16 @@ const showPDFOptions = (id: string) => {
       
       
      <FlatList
-  data={pdfs}
+  data={filteredPDFs}
   keyExtractor={(item) => item.id}
   ListHeaderComponent={
     <>
       <HomeHeader userName="Atul" />
 
-      <SearchBar />
+      <SearchBar
+  value={searchQuery}
+  onChangeText={setSearchQuery}
+/>
 
       <Text
         style={{
@@ -133,6 +147,18 @@ const showPDFOptions = (id: string) => {
   contentContainerStyle={{
     paddingBottom: 120,
   }}
+  ListEmptyComponent={
+  <Text
+    style={{
+      textAlign: "center",
+      color: Colors.textSecondary,
+      marginTop: 40,
+      fontSize: 16,
+    }}
+  >
+    No PDFs found.
+  </Text>
+}
 />
 
 
