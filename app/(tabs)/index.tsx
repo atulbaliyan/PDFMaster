@@ -16,7 +16,9 @@ import { router } from "expo-router";
 import RenameModal from "../../components/home/RenameModal";
 import { sharePDF } from "../../services/share/sharePDF";
 import PDFOptionsSheet from "../../components/home/PDFOptionsSheet";
-
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+import { addPDF } from "../../services/storage/pdfStorage";
 console.log("formatDate =", formatDate);
 
 
@@ -24,19 +26,21 @@ export default function HomeScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const pdfOptionsSheetRef = useRef<BottomSheetModal>(null);
   const [pdfs, setPdfs] = useState<PDFFile[]>([]);
-  useEffect(() => {
-  async function getPDFs() {
-    const storedPDFs = await loadPDFs();
-    setPdfs(storedPDFs);
-  }
+ 
+ 
+  useFocusEffect(
+  useCallback(() => {
+    async function getPDFs() {
+      const storedPDFs = await loadPDFs();
+      setPdfs(storedPDFs);
+    }
 
-  getPDFs();
-}, []);
+    getPDFs();
+  }, [])
+);
 
 
-useEffect(() => {
-  savePDFs(pdfs);
-}, [pdfs]);
+
 
 const [searchQuery, setSearchQuery] = useState("");
 
@@ -140,20 +144,27 @@ console.log("Filtered:", filteredPDFs.map((p) => p.name));
 
 <ActionSheet
   ref={bottomSheetRef}
-  onPDFSelected={(pdf) => {
-    console.log("Home received:", pdf);
+  onPDFSelected={async (pdf) => {
+  console.log("Home received:", pdf);
 
-    setPdfs((prev) => [
-      {
-        id: Date.now().toString(),
-        name: pdf.name,
-        uri: pdf.uri,
-        size: pdf.size ?? 0,
-        date: formatDate(Date.now()),
-      },
-      ...prev,
-    ]);
-  }}
+  const newPDF: PDFFile = {
+    id: Date.now().toString(),
+    name: pdf.name,
+    uri: pdf.uri,
+    size: pdf.size ?? 0,
+    date: formatDate(pdf.lastModified ?? Date.now()),
+  };
+
+  // Save to AsyncStorage
+  await addPDF(newPDF);
+
+  // Reload all PDFs from storage
+  const storedPDFs = await loadPDFs();
+  setPdfs(storedPDFs);
+}}
+onCreateBlankPDF={() => {
+  router.push("/pdf/create");
+}}
 />
 
 

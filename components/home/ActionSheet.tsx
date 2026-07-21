@@ -11,10 +11,11 @@ import { DocumentPickerAsset } from "expo-document-picker";
 
 interface ActionSheetProps {
   onPDFSelected: (pdf: DocumentPickerAsset) => void;
+  onCreateBlankPDF: () => void;
 }
 
 const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
-  ({ onPDFSelected }, ref) => {
+  ({ onPDFSelected, onCreateBlankPDF }, ref) => {
 
     const modalRef = useRef<BottomSheetModal>(null);
 
@@ -22,7 +23,9 @@ const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
     const snapPoints = useMemo(
       () => ["45%"],[]);
 
-    return (
+  
+  
+      return (
      <BottomSheetModal
        ref={modalRef}
         snapPoints={snapPoints}
@@ -61,8 +64,9 @@ const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
             </Text>
           </Pressable>
 
-          <Pressable style={styles.item}>
-            <Ionicons
+          <Pressable
+            style={styles.item} >
+             <Ionicons
               name="camera-outline"
               size={24}
               color={Colors.primary}
@@ -85,7 +89,14 @@ const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
             </Text>
           </Pressable>
 
-          <Pressable style={styles.item}>
+          <Pressable style={styles.item}
+            onPress={() => {
+            modalRef.current?.dismiss();
+
+            setTimeout(() => {
+            onCreateBlankPDF();
+           }, 250);
+        }}>
             <Ionicons
               name="create-outline"
               size={24}
