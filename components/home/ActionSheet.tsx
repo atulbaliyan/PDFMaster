@@ -12,10 +12,11 @@ import { DocumentPickerAsset } from "expo-document-picker";
 interface ActionSheetProps {
   onPDFSelected: (pdf: DocumentPickerAsset) => void;
   onCreateBlankPDF: () => void;
+  onScanDocument: () => void;
 }
 
 const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
-  ({ onPDFSelected, onCreateBlankPDF }, ref) => {
+  ({ onPDFSelected, onCreateBlankPDF,onScanDocument, }, ref) => {
 
     const modalRef = useRef<BottomSheetModal>(null);
 
@@ -64,8 +65,10 @@ const ActionSheet = forwardRef<BottomSheetModal, ActionSheetProps>(
             </Text>
           </Pressable>
 
-          <Pressable
-            style={styles.item} >
+              <Pressable
+              style={styles.item}
+              onPress={onScanDocument}
+                                   >
              <Ionicons
               name="camera-outline"
               size={24}

@@ -163,8 +163,11 @@ console.log("Filtered:", filteredPDFs.map((p) => p.name));
   setPdfs(storedPDFs);
 }}
 onCreateBlankPDF={() => {
-  router.push("/pdf/create");
-}}
+    router.push("/pdf/create");
+  }}
+  onScanDocument={() => {
+    router.push("/scan");
+  }}
 />
 
 
