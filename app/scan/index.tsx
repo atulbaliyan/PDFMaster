@@ -5,14 +5,17 @@ import CameraView from "../../components/scan/CameraView";
 import CaptureButton from "../../components/scan/CaptureButton";
 import ScanHeader from "../../components/scan/ScanHeader";
 import { ScanStep } from "../../types/scanStep";
-import PreviewActions from "../../components/scan/PreviewActions";
-import PreviewImage from "../../components/scan/PreviewImage";
+
+import { ScanImage } from "../../types/scan";
+import CameraStep from "../../components/scan/CameraStep";
+import PreviewStep from "../../components/scan/PreviewStep";
+
 
 export default function ScanScreen() {
   const [step, setStep] = useState<ScanStep>("camera");
 
-const [capturedImage, setCapturedImage] = useState<string | null>(null);
-    
+ const [scanImage, setScanImage] =
+  useState<ScanImage | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<ExpoCameraView>(null);
 
@@ -31,7 +34,15 @@ const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
 if (!photo) return;
 
-setCapturedImage(photo.uri);
+setScanImage({
+  id: Date.now().toString(),
+  uri: photo.uri,
+  rotation: 0,
+  brightness: 0,
+  contrast: 0,
+  filter: "original",
+  cropped: false,
+});
 
 setStep("preview");
 
@@ -45,36 +56,24 @@ setStep("preview");
     <View style={styles.container}>
       <ScanHeader />
 
-     {step === "camera" && (
-  <>
-    <CameraView cameraRef={cameraRef} />
-
-    <View style={styles.footer}>
-      <CaptureButton onPress={takePicture} />
-    </View>
-  </>
+   {step === "camera" && (
+  <CameraStep
+    cameraRef={cameraRef}
+    onCapture={takePicture}
+  />
 )}
 
-{step === "preview" && capturedImage && (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: "black",
+{step === "preview" && scanImage && (
+  <PreviewStep
+    image={scanImage}
+    onRetake={() => {
+      setScanImage(null);
+      setStep("camera");
     }}
-  >
-    <PreviewImage uri={capturedImage} />
-
-    <PreviewActions
-      uri={capturedImage}
-      onRetake={() => {
-        setCapturedImage(null);
-        setStep("camera");
-      }}
-     onContinue={() => {
-  console.log("Continue clicked");
-}}
-    />
-  </View>
+    onContinue={() => {
+      console.log("Continue clicked");
+    }}
+  />
 )}
 
 
