@@ -9,6 +9,7 @@ import { ScanStep } from "../../types/scanStep";
 import { ScanImage } from "../../types/scan";
 import CameraStep from "../../components/scan/CameraStep";
 import PreviewStep from "../../components/scan/PreviewStep";
+import CropStep from "../../components/scan/CropStep";
 
 
 export default function ScanScreen() {
@@ -56,6 +57,7 @@ setStep("preview");
     <View style={styles.container}>
       <ScanHeader />
 
+{/* CAMERA STEP */}
    {step === "camera" && (
   <CameraStep
     cameraRef={cameraRef}
@@ -63,6 +65,7 @@ setStep("preview");
   />
 )}
 
+{/* PREVIEW STEP */}
 {step === "preview" && scanImage && (
   <PreviewStep
     image={scanImage}
@@ -70,8 +73,22 @@ setStep("preview");
       setScanImage(null);
       setStep("camera");
     }}
-    onContinue={() => {
-      console.log("Continue clicked");
+   onContinue={() => {
+  setStep("crop");
+}}
+  />
+)}
+
+{/* CROP STEP */}
+{step === "crop" && scanImage && (
+  <CropStep
+    image={scanImage}
+    onComplete={(image) => {
+      setScanImage(image);
+
+      console.log("Crop Complete ✅");
+
+      setStep("preview");
     }}
   />
 )}
