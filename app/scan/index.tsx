@@ -10,14 +10,16 @@ import { ScanImage } from "../../types/scan";
 import CameraStep from "../../components/scan/CameraStep";
 import PreviewStep from "../../components/scan/PreviewStep";
 import CropStep from "../../components/scan/CropStep";
+import { addPage } from "../../services/scan/scanSession";
+import PagesStep from "../../components/scan/PagesStep";
 
 
 export default function ScanScreen() {
   const [step, setStep] = useState<ScanStep>("camera");
 
- const [scanImage, setScanImage] =
-  useState<ScanImage | null>(null);
-  const [permission, requestPermission] = useCameraPermissions();
+ const [scanImage, setScanImage] =useState<ScanImage | null>(null);
+ const [scanImages, setScanImages] = useState<ScanImage[]>([]);
+ const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<ExpoCameraView>(null);
 
   useEffect(() => {
@@ -83,16 +85,34 @@ setStep("preview");
 {step === "crop" && scanImage && (
   <CropStep
     image={scanImage}
-    onComplete={(image) => {
-      setScanImage(image);
+   onComplete={(image) => {
+  setScanImage(image);
 
-      console.log("Crop Complete ✅");
+  setScanImages((previousPages) =>
+    addPage(previousPages, image)
+  );
 
-      setStep("preview");
+  console.log("Pages:", scanImages.length + 1);
+
+  setStep("pages");
+     }}
+  />
+ )}
+{/* REnder pagestep        */}
+
+{step === "pages" && (
+  <PagesStep
+    pages={scanImages}
+    onAddPage={() => {
+      setScanImage(null);
+      setStep("camera");
+    }}
+    onFinish={() => {
+      console.log("Document Finished ✅");
+      console.log(scanImages);
     }}
   />
 )}
-
 
     </View>
   );
