@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import {  StyleSheet, View } from "react-native";
 import { CameraView as ExpoCameraView, useCameraPermissions } from "expo-camera";
-import CameraView from "../../components/scan/CameraView";
-import CaptureButton from "../../components/scan/CaptureButton";
 import ScanHeader from "../../components/scan/ScanHeader";
 import { ScanStep } from "../../types/scanStep";
-
 import { ScanImage } from "../../types/scan";
 import CameraStep from "../../components/scan/CameraStep";
 import PreviewStep from "../../components/scan/PreviewStep";
 import CropStep from "../../components/scan/CropStep";
 import { addPage } from "../../services/scan/scanSession";
 import PagesStep from "../../components/scan/PagesStep";
+import { Alert } from "react-native";
+import { removePage } from "../../services/scan/scanSession";
 
 
 export default function ScanScreen() {
@@ -101,17 +100,40 @@ setStep("preview");
 {/* REnder pagestep        */}
 
 {step === "pages" && (
-  <PagesStep
-    pages={scanImages}
-    onAddPage={() => {
-      setScanImage(null);
-      setStep("camera");
-    }}
-    onFinish={() => {
-      console.log("Document Finished ✅");
-      console.log(scanImages);
-    }}
-  />
+ <PagesStep
+  pages={scanImages}
+  onAddPage={() => {
+    setScanImage(null);
+    setStep("camera");
+  }}
+  onFinish={() => {
+    console.log("Document Finished ✅");
+  }}
+  onEditPage={(page) => {
+    console.log("Edit:", page.id);
+  }}
+  onDeletePage={(id) => {
+    Alert.alert(
+      "Delete Page",
+      "Are you sure you want to remove this page?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setScanImages((pages) =>
+              removePage(pages, id)
+            );
+          },
+        },
+      ]
+    );
+  }}
+/>
 )}
 
     </View>

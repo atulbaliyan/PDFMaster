@@ -4,16 +4,24 @@ import { FlatList } from "react-native";
 import PageCard from "./PageCard";
 
 interface PagesStepProps {
-  pages: ScanImage[];
-  onAddPage: () => void;
-  onFinish: () => void;
+    pages: ScanImage[];
+
+    onAddPage: () => void;
+
+    onFinish: () => void;
+
+    onDeletePage: (id: string) => void;
+
+    onEditPage: (page: ScanImage) => void;
 }
 
 export default function PagesStep({
-  pages,
-  onAddPage,
-  onFinish,
-}: PagesStepProps) {
+    pages,
+    onAddPage,
+    onFinish,
+    onDeletePage,
+    onEditPage,
+}: PagesStepProps){
 
 
 
@@ -29,9 +37,11 @@ export default function PagesStep({
     data={pages}
     keyExtractor={(item) => item.id}
     renderItem={({ item, index }) => (
-      <PageCard
-  page={item}
-  index={index}
+     <PageCard
+    page={item}
+    index={index}
+    onDelete={onDeletePage}
+    onEdit={onEditPage}
 />
     )}
     style={styles.list}

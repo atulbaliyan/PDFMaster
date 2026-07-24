@@ -3,11 +3,15 @@ import PageActions from "./PageActions";
 import { ScanImage } from "../../types/scan";
 
 interface PageCardProps {
-  page: ScanImage;
-  index: number;
+    page: ScanImage;
+    index: number;
+
+    onEdit: (page: ScanImage) => void;
+
+    onDelete: (id: string) => void;
 }
 
-export default function PageCard({ page, index }: PageCardProps) {
+export default function PageCard({ page, index, onEdit, onDelete }: PageCardProps) {
   return (
    <View style={styles.card}>
 
@@ -25,9 +29,9 @@ export default function PageCard({ page, index }: PageCardProps) {
       </Text>
 
       <PageActions
-        onEdit={() => {}}
-        onDelete={() => {}}
-      />
+    onEdit={() => onEdit(page)}
+    onDelete={() => onDelete(page.id)}
+/>
 
     </View>
 
