@@ -11,6 +11,7 @@ import { addPage } from "../../services/scan/scanSession";
 import PagesStep from "../../components/scan/PagesStep";
 import { Alert } from "react-native";
 import { removePage } from "../../services/scan/scanSession";
+import EditStep from "../../components/scan/editor/EditStep";
 
 
 export default function ScanScreen() {
@@ -18,6 +19,8 @@ export default function ScanScreen() {
 
  const [scanImage, setScanImage] =useState<ScanImage | null>(null);
  const [scanImages, setScanImages] = useState<ScanImage[]>([]);
+ const [selectedPage, setSelectedPage] = useState<ScanImage | null>(null);
+
  const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<ExpoCameraView>(null);
 
@@ -33,6 +36,9 @@ export default function ScanScreen() {
   const photo = await cameraRef.current.takePictureAsync({
   quality: 0.8,
 });
+
+
+
 
 if (!photo) return;
 
@@ -53,6 +59,7 @@ setStep("preview");
   if (!permission?.granted) {
     return <View />;
   }
+
 
   return (
     <View style={styles.container}>
@@ -109,9 +116,10 @@ setStep("preview");
   onFinish={() => {
     console.log("Document Finished ✅");
   }}
-  onEditPage={(page) => {
-    console.log("Edit:", page.id);
-  }}
+ onEditPage={(page) => {
+  setSelectedPage(page);
+  setStep("edit");
+}}
   onDeletePage={(id) => {
     Alert.alert(
       "Delete Page",
@@ -134,6 +142,27 @@ setStep("preview");
     );
   }}
 />
+)}
+
+{/* EDIT STEP */}
+{step === "edit" && selectedPage && (
+  <EditStep
+    page={selectedPage}
+    onSave={(updatedPage: ScanImage) => {
+      setScanImages((pages) =>
+        pages.map((page) =>
+          page.id === updatedPage.id ? updatedPage : page
+        )
+      );
+
+      setSelectedPage(null);
+      setStep("pages");
+    }}
+    onCancel={() => {
+      setSelectedPage(null);
+      setStep("pages");
+    }}
+  />
 )}
 
     </View>
