@@ -1,28 +1,84 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet ,Image} from "react-native";
+import PageActions from "./PageActions";
+import { ScanImage } from "../../types/scan";
 
 interface PageCardProps {
+  page: ScanImage;
   index: number;
 }
 
-export default function PageCard({ index }: PageCardProps) {
+export default function PageCard({ page, index }: PageCardProps) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>📄 Page {index + 1}</Text>
+   <View style={styles.card}>
+
+  <Image
+    source={{ uri: page.uri }}
+    style={styles.thumbnail}
+  />
+
+  <View style={styles.info}>
+
+    <View style={styles.header}>
+
+      <Text style={styles.title}>
+        Page {index + 1}
+      </Text>
+
+      <PageActions
+        onEdit={() => {}}
+        onDelete={() => {}}
+      />
+
     </View>
+
+    <Text style={styles.subtitle}>
+      Cropped
+    </Text>
+
+  </View>
+
+</View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#fff",
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 14,
     borderWidth: 1,
     borderColor: "#E5E7EB",
   },
+
+  thumbnail: {
+    width: 70,
+    height: 90,
+    borderRadius: 8,
+  },
+
+  info: {
+    flex: 1,
+    marginLeft: 16,
+    justifyContent: "center",
+  },
+
+  // ⭐ Add this
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
+  },
+
+  subtitle: {
+    color: "#6B7280",
+    marginTop: 4,
   },
 });

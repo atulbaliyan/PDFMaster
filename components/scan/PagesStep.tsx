@@ -28,8 +28,11 @@ export default function PagesStep({
   <FlatList
     data={pages}
     keyExtractor={(item) => item.id}
-    renderItem={({ index }) => (
-      <PageCard index={index} />
+    renderItem={({ item, index }) => (
+      <PageCard
+  page={item}
+  index={index}
+/>
     )}
     style={styles.list}
     contentContainerStyle={{ paddingBottom: 20 }}
