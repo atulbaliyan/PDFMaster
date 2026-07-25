@@ -43,15 +43,9 @@ const handleLogin = async () => {
   try {
     setLoading(true);
 
-    await login(
-      email.trim(),
-      password
-    );
+    await login(email.trim(),password);
 
-    Alert.alert(
-      "Welcome 🎉",
-      "Login Successful!"
-    );
+    Alert.alert("Welcome 🎉","Login Successful!");
 
     router.replace("/(tabs)");
 

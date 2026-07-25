@@ -1,6 +1,8 @@
 export interface ScanImage {
   id: string;
   uri: string;
+   
+
   rotation: number;
   brightness: number;
   contrast: number;

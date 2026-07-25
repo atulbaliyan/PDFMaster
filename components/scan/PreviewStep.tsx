@@ -3,6 +3,7 @@ import PreviewImage from "./PreviewImage";
 import PreviewActions from "./PreviewActions";
 import { ScanImage } from "../../types/scan";
 
+
 interface PreviewStepProps {
   image: ScanImage;
   onRetake: () => void;

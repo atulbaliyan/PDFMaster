@@ -63,8 +63,9 @@ setStep("preview");
 
   return (
     <View style={styles.container}>
-      <ScanHeader />
-
+{["camera", "preview", "crop", "pages"].includes(step) && (
+  <ScanHeader />
+)}
 {/* CAMERA STEP */}
    {step === "camera" && (
   <CameraStep

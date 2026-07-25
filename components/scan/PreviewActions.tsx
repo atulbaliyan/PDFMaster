@@ -1,7 +1,7 @@
 import { View, Pressable, Text, StyleSheet } from "react-native";
 
 interface Props {
-  uri: string;
+  
 
   onRetake: () => void;
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function PreviewActions({
-  uri,
+  
   onRetake,
   onContinue,
 }: Props) {
