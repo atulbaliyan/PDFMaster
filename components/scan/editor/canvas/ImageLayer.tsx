@@ -1,37 +1,53 @@
 import { Image, useImage } from "@shopify/react-native-skia";
 import { ScanImage } from "../../../../types/scan";
+import useImageTransform from "../hooks/useImageTransform";
 
 interface ImageLayerProps {
   page: ScanImage;
   canvasWidth: number;
   canvasHeight: number;
+
+  zoom: number;
+
+  translation: {
+    x: number;
+    y: number;
+  };
+
+  rotation: number;
 }
 
-export default function ImageLayer({ page, canvasWidth, canvasHeight }: ImageLayerProps) {
+export default function ImageLayer({
+  page,
+  canvasWidth,
+  canvasHeight,
+  zoom,
+  translation,
+  rotation,
+}: ImageLayerProps) {
   const image = useImage(page.uri);
 
-  if (!image) {return null; }
-  const imageWidth = image.width();
-const imageHeight = image.height();
+ const { x, y, width, height } = useImageTransform({
+  imageWidth: image?.width() ?? 1,
+  imageHeight: image?.height() ?? 1,
+  canvasWidth,
+  canvasHeight,
+  zoom,
+  translation,
+  rotation,
+});
 
-const scale = Math.min(
-  canvasWidth / imageWidth,
-  canvasHeight / imageHeight
-);
-
-const width = imageWidth * scale;
-const height = imageHeight * scale;
-
-const x = (canvasWidth - width) / 2;
-const y = (canvasHeight - height) / 2;
+  if (!image) {
+    return null;
+  }
 
   return (
-   <Image
-  image={image}
-  x={x}
-  y={y}
-  width={width}
-  height={height}
-/>
+    <Image
+      image={image}
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+    />
   );
 }
