@@ -2,19 +2,20 @@ import { Image, useImage } from "@shopify/react-native-skia";
 import { ScanImage } from "../../../../types/scan";
 import useImageTransform from "../hooks/useImageTransform";
 
+import type { SharedValue } from "react-native-reanimated";
+
 interface ImageLayerProps {
   page: ScanImage;
+
   canvasWidth: number;
   canvasHeight: number;
 
-  zoom: number;
+  zoom: SharedValue<number>;
 
-  translation: {
-    x: number;
-    y: number;
-  };
+  translationX: SharedValue<number>;
+  translationY: SharedValue<number>;
 
-  rotation: number;
+  rotation: SharedValue<number>;
 }
 
 export default function ImageLayer({
@@ -22,7 +23,8 @@ export default function ImageLayer({
   canvasWidth,
   canvasHeight,
   zoom,
-  translation,
+  translationX,
+  translationY,
   rotation,
 }: ImageLayerProps) {
   const image = useImage(page.uri);
@@ -33,7 +35,8 @@ export default function ImageLayer({
   canvasWidth,
   canvasHeight,
   zoom,
-  translation,
+  translationX,
+  translationY,
   rotation,
 });
 

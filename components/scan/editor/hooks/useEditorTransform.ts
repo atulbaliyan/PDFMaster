@@ -1,23 +1,17 @@
-import { useState } from "react";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function useEditorTransform() {
-  const [zoom, setZoom] = useState(1);
+  const zoom = useSharedValue(1);
 
-  const [translation, setTranslation] = useState({
-    x: 0,
-    y: 0,
-  });
+  const translationX = useSharedValue(0);
+  const translationY = useSharedValue(0);
 
-  const [rotation, setRotation] = useState(0);
+  const rotation = useSharedValue(0);
 
   return {
     zoom,
-    setZoom,
-
-    translation,
-    setTranslation,
-
+    translationX,
+    translationY,
     rotation,
-    setRotation,
   };
 }

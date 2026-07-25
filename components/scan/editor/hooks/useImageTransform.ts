@@ -1,4 +1,4 @@
-
+import type { SharedValue } from "react-native-reanimated";
 
 interface UseImageTransformProps {
   imageWidth: number;
@@ -7,14 +7,12 @@ interface UseImageTransformProps {
   canvasWidth: number;
   canvasHeight: number;
 
-  zoom: number;
+  zoom: SharedValue<number>;
 
-  translation: {
-    x: number;
-    y: number;
-  };
+  translationX: SharedValue<number>;
+  translationY: SharedValue<number>;
 
-  rotation: number;
+  rotation: SharedValue<number>;
 }
 
 export default function useImageTransform({
@@ -23,7 +21,9 @@ export default function useImageTransform({
   canvasWidth,
   canvasHeight,
   zoom,
-  translation,
+  
+  translationX,
+  translationY,
   rotation,
 }: UseImageTransformProps) {
 
@@ -32,12 +32,12 @@ const baseScale = Math.min(
   canvasWidth / imageWidth,
   canvasHeight / imageHeight
 );
-const scale = baseScale * zoom;
+const scale = baseScale * zoom.value;
   const width = imageWidth * scale;
   const height = imageHeight * scale;
 
-  const x = (canvasWidth - width) / 2 + translation.x;
-const y = (canvasHeight - height) / 2 + translation.y;
+  const x = (canvasWidth - width) / 2 + translationX.value;
+const y = (canvasHeight - height) / 2 + translationY.value;
 
   
 

@@ -4,6 +4,10 @@ import { useState } from "react";
 import ImageLayer from "./ImageLayer";
 import { ScanImage } from "../../../../types/scan";
 import useEditorTransform from "../hooks/useEditorTransform";
+import {
+  Gesture,
+  GestureDetector,
+} from "react-native-gesture-handler";
 
 interface EditorCanvasProps {
     page: ScanImage;
@@ -19,12 +23,15 @@ export default function EditorCanvas({ page,}: EditorCanvasProps) {
 });
 const {
   zoom,
-  setZoom,
-  translation,
-  setTranslation,
+  translationX,
+  translationY,
   rotation,
-  setRotation,
 } = useEditorTransform();
+
+const panGesture = Gesture.Pan().onUpdate((event) => {
+  translationX.value = event.translationX;
+  translationY.value = event.translationY;
+});
 
   return (
     <View
@@ -38,16 +45,19 @@ const {
        });
      }}
    >
+    <GestureDetector gesture={panGesture}>
     <Canvas style={styles.canvas}>
-    <ImageLayer
-  page={page}
-  canvasWidth={canvasSize.width}
-  canvasHeight={canvasSize.height}
-  zoom={zoom}
-  translation={translation}
-  rotation={rotation}
-/>
-   </Canvas>
+      <ImageLayer
+        page={page}
+        canvasWidth={canvasSize.width}
+        canvasHeight={canvasSize.height}
+        zoom={zoom}
+translationX={translationX}
+translationY={translationY}
+rotation={rotation}
+      />
+    </Canvas>
+  </GestureDetector>
     </View>
   );
 }
