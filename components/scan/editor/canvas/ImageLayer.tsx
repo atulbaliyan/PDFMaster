@@ -1,4 +1,10 @@
-import { Image, useImage } from "@shopify/react-native-skia";
+import {
+  Group,
+  Image,
+  useImage,
+ 
+} from "@shopify/react-native-skia";
+import { useDerivedValue } from "react-native-reanimated";
 import { ScanImage } from "../../../../types/scan";
 import useImageTransform from "../hooks/useImageTransform";
 
@@ -34,23 +40,33 @@ export default function ImageLayer({
   imageHeight: image?.height() ?? 1,
   canvasWidth,
   canvasHeight,
-  zoom,
-  translationX,
-  translationY,
-  rotation,
+ 
 });
+const centerX = x + width / 2;
+const centerY = y + height / 2;
 
-  if (!image) {
+ const transform = useDerivedValue(() => [
+  { translateX: translationX.value },
+  { translateY: translationY.value },
+  { scale: zoom.value },
+  { rotate: rotation.value },
+]);
+
+ if (!image) {
     return null;
   }
-
-  return (
-    <Image
-      image={image}
-      x={x}
-      y={y}
-      width={width}
-      height={height}
-    />
-  );
+ return (
+ <Group
+  origin={{ x: centerX, y: centerY }}
+  transform={transform}
+>
+  <Image
+    image={image}
+    x={x}
+    y={y}
+    width={width}
+    height={height}
+  />
+</Group>
+);
 }
