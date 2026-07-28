@@ -3,19 +3,34 @@ import { StyleSheet, View } from "react-native";
 import { useState, useEffect } from "react";
 import ImageLayer from "./ImageLayer";
 import { ScanImage } from "../../../../types/scan";
-import useEditorTransform from "../hooks/useEditorTransform";
+
 import {
   Gesture,
   GestureDetector,
 } from "react-native-gesture-handler";
-import { useSharedValue } from "react-native-reanimated";
+import { SharedValue, useSharedValue } from "react-native-reanimated";
 import { runOnJS } from "react-native-reanimated";
+import useEditorTransform from "../hooks/useEditorTransform";
+
 
 interface EditorCanvasProps {
   page: ScanImage;
+
+  zoom: SharedValue<number>;
+
+  translationX: SharedValue<number>;
+  translationY: SharedValue<number>;
+
+  rotation: SharedValue<number>;
 }
 
-export default function EditorCanvas({ page }: EditorCanvasProps) {
+export default function EditorCanvas({
+  page,
+  zoom,
+  translationX,
+  translationY,
+  rotation,
+}: EditorCanvasProps) {
   const [canvasSize, setCanvasSize] = useState({
     width: 0,
     height: 0,
@@ -24,12 +39,7 @@ export default function EditorCanvas({ page }: EditorCanvasProps) {
   // Debug state to force React re-render
   const [, forceUpdate] = useState(0);
 
-  const {
-    zoom,
-    translationX,
-    translationY,
-    rotation,
-  } = useEditorTransform();
+ 
 
   // Debug: print SharedValue every second
   useEffect(() => {
@@ -73,6 +83,7 @@ const panGesture = Gesture.Pan()
   panGesture,
   pinchGesture
 );
+
 
   return (
     <View

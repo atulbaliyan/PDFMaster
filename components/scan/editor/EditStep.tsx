@@ -7,6 +7,7 @@ import BottomToolbar from "./BottomToolbar";
 import { useState } from "react";
 import AdjustmentSlider from "./AdjustmentSlider";
 import EditorCanvas from "./canvas";
+import useEditorTransform from "./hooks/useEditorTransform";
 
 interface EditStepProps {
   page: ScanImage;
@@ -25,6 +26,13 @@ export default function EditStep({
   const [activeTool, setActiveTool] = useState<
   "rotate" | "filter" | "brightness" | "contrast" | null
 >(null);
+const {
+  zoom,
+  translationX,
+  translationY,
+  rotation,
+} = useEditorTransform();
+ 
 
   return (
     <View style={styles.container}>
@@ -35,7 +43,13 @@ export default function EditStep({
         onSave={() => onSave(page)}
       />
 
-      <EditorCanvas page={page} />
+     <EditorCanvas
+  page={page}
+  zoom={zoom}
+  translationX={translationX}
+  translationY={translationY}
+  rotation={rotation}
+/>
 
       {activeTool === "brightness" && (
        <AdjustmentSlider
@@ -53,10 +67,16 @@ export default function EditStep({
        />
       )}
 
-       <BottomToolbar
-       activeTool={activeTool}
-       onToolPress={setActiveTool}
-       />
+     <BottomToolbar
+  activeTool={activeTool}
+  onToolPress={(tool) => {
+    if (tool === "rotate") {
+      rotation.value += Math.PI / 2;
+    } else {
+      setActiveTool(tool);
+    }
+  }}
+/>
 
     </View>
   );
