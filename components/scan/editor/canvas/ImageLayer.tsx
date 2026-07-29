@@ -1,14 +1,19 @@
 import {
   Group,
   Image,
+  ColorMatrix,
   useImage,
- 
 } from "@shopify/react-native-skia";
 import { useDerivedValue } from "react-native-reanimated";
 import { ScanImage } from "../../../../types/scan";
 import useImageTransform from "../hooks/useImageTransform";
 
 import type { SharedValue } from "react-native-reanimated";
+import {
+  brightnessMatrix,
+  contrastMatrix,
+  multiplyMatrices,
+} from "../utils/colorMatrices";
 
 interface ImageLayerProps {
   page: ScanImage;
@@ -17,11 +22,12 @@ interface ImageLayerProps {
   canvasHeight: number;
 
   zoom: SharedValue<number>;
-
   translationX: SharedValue<number>;
   translationY: SharedValue<number>;
-
   rotation: SharedValue<number>;
+
+  brightness: number;// <-- NEW
+  contrast: number;
 }
 
 export default function ImageLayer({
@@ -32,6 +38,8 @@ export default function ImageLayer({
   translationX,
   translationY,
   rotation,
+  brightness,
+   contrast,// <-- NEW
 }: ImageLayerProps) {
   const image = useImage(page.uri);
 
@@ -52,6 +60,11 @@ const centerY = y + height / 2;
   { rotate: rotation.value },
 ]);
 
+const matrix = multiplyMatrices(
+  brightnessMatrix(brightness),
+  contrastMatrix(contrast)
+);
+
  if (!image) {
     return null;
   }
@@ -61,12 +74,28 @@ const centerY = y + height / 2;
   transform={transform}
 >
   <Image
-    image={image}
-    x={x}
-    y={y}
-    width={width}
-    height={height}
-  />
+  image={image}
+  x={x}
+  y={y}
+  width={width}
+  height={height}
+>
+  <ColorMatrix matrix={matrix} />
+</Image>
 </Group>
+
 );
 }
+
+
+/*    
+<Image
+  image={image}
+  x={x}
+  y={y}
+  width={width}
+  height={height}
+>
+  <ColorMatrix matrix={matrix} />
+</Image>
+*/

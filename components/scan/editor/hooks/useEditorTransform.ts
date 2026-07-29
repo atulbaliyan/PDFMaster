@@ -5,7 +5,7 @@ export default function useEditorTransform() {
 
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
-
+  const brightness = useSharedValue(0);
   const rotation = useSharedValue(0);
 
   return {
@@ -13,5 +13,6 @@ export default function useEditorTransform() {
     translationX,
     translationY,
     rotation,
+    
   };
 }

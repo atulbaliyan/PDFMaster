@@ -17,19 +17,21 @@ interface EditorCanvasProps {
   page: ScanImage;
 
   zoom: SharedValue<number>;
-
   translationX: SharedValue<number>;
   translationY: SharedValue<number>;
-
   rotation: SharedValue<number>;
-}
 
+  brightness: number;
+  contrast: number;// <-- Add this
+}
 export default function EditorCanvas({
   page,
   zoom,
   translationX,
   translationY,
   rotation,
+  brightness, // <-- Add this
+  contrast, // <-- Add this
 }: EditorCanvasProps) {
   const [canvasSize, setCanvasSize] = useState({
     width: 0,
@@ -107,6 +109,8 @@ const panGesture = Gesture.Pan()
             translationX={translationX}
             translationY={translationY}
             rotation={rotation}
+            brightness={brightness}
+            contrast={contrast}
           />
         </Canvas>
       </GestureDetector>

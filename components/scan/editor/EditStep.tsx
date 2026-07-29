@@ -43,12 +43,14 @@ const {
         onSave={() => onSave(page)}
       />
 
-     <EditorCanvas
+    <EditorCanvas
   page={page}
   zoom={zoom}
   translationX={translationX}
   translationY={translationY}
   rotation={rotation}
+  brightness={brightness}   // <-- Add this
+  contrast={contrast}      // <-- Add this
 />
 
       {activeTool === "brightness" && (
