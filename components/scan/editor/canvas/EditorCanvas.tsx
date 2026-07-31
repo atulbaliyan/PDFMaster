@@ -11,6 +11,7 @@ import {
 import { SharedValue, useSharedValue } from "react-native-reanimated";
 import { runOnJS } from "react-native-reanimated";
 import useEditorTransform from "../hooks/useEditorTransform";
+import { FilterType } from "../../../../types/filter";
 
 
 interface EditorCanvasProps {
@@ -23,6 +24,7 @@ interface EditorCanvasProps {
 
   brightness: number;
   contrast: number;// <-- Add this
+  filter: FilterType;
 }
 export default function EditorCanvas({
   page,
@@ -31,7 +33,8 @@ export default function EditorCanvas({
   translationY,
   rotation,
   brightness, // <-- Add this
-  contrast, // <-- Add this
+  contrast,
+  filter, // <-- Add this
 }: EditorCanvasProps) {
   const [canvasSize, setCanvasSize] = useState({
     width: 0,
@@ -111,6 +114,7 @@ const panGesture = Gesture.Pan()
             rotation={rotation}
             brightness={brightness}
             contrast={contrast}
+            filter={filter}
           />
         </Canvas>
       </GestureDetector>

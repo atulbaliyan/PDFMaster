@@ -8,6 +8,8 @@ import { useState } from "react";
 import AdjustmentSlider from "./AdjustmentSlider";
 import EditorCanvas from "./canvas";
 import useEditorTransform from "./hooks/useEditorTransform";
+import { FilterType } from "../../../types/filter";
+import FilterPicker from "./FilterPicker";
 
 interface EditStepProps {
   page: ScanImage;
@@ -20,8 +22,10 @@ export default function EditStep({
   onSave,
   onCancel,
 }: EditStepProps) {
+ 
   const [brightness, setBrightness] = useState(0);
   const [contrast, setContrast] = useState(0);
+  const [filter, setFilter] = useState<FilterType>("enhanced");
 
   const [activeTool, setActiveTool] = useState<
   "rotate" | "filter" | "brightness" | "contrast" | null
@@ -43,14 +47,15 @@ const {
         onSave={() => onSave(page)}
       />
 
-    <EditorCanvas
+   <EditorCanvas
   page={page}
   zoom={zoom}
   translationX={translationX}
   translationY={translationY}
   rotation={rotation}
-  brightness={brightness}   // <-- Add this
-  contrast={contrast}      // <-- Add this
+  brightness={brightness}
+  contrast={contrast}
+  filter={filter}
 />
 
       {activeTool === "brightness" && (
@@ -66,6 +71,12 @@ const {
        title="Contrast"
        value={contrast}
        onValueChange={setContrast}
+       />
+      )}
+      {activeTool === "filter" && (
+      <FilterPicker
+       value={filter}
+       onChange={setFilter}
        />
       )}
 

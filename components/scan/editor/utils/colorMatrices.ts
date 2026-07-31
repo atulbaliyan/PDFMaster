@@ -1,3 +1,27 @@
+
+import { FilterType } from "../../../../types/filter";
+
+export function filterMatrix(filter: FilterType): number[] {
+  switch (filter) {
+    case "grayscale":
+      return grayscaleMatrix();
+
+    case "bw":
+      return blackWhiteMatrix();
+
+    case "document":
+      return documentMatrix();
+
+    case "enhanced":
+      return enhancedMatrix();
+
+    default:
+      return originalMatrix();
+  }
+}
+
+
+
 // colorMatrices.ts
 
 /**
@@ -52,4 +76,48 @@ export function multiplyMatrices(a: number[], b: number[]): number[] {
   }
 
   return result;
+}
+
+export function grayscaleMatrix(): number[] {
+  return [
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0,      0,      0,      1, 0,
+  ];
+}
+
+export function originalMatrix(): number[] {
+  return [
+    1,0,0,0,0,
+    0,1,0,0,0,
+    0,0,1,0,0,
+    0,0,0,1,0,
+  ];
+}
+
+export function blackWhiteMatrix(): number[] {
+  return [
+    1.5, 1.5, 1.5, 0, -1,
+    1.5, 1.5, 1.5, 0, -1,
+    1.5, 1.5, 1.5, 0, -1,
+    0,   0,   0,   1, 0,
+  ];
+}
+
+export function documentMatrix(): number[] {
+  return [
+    1.2, 0,   0,   0, 0.05,
+    0,   1.2, 0,   0, 0.05,
+    0,   0,   1.2, 0, 0.05,
+    0,   0,   0,   1, 0,
+  ];
+}
+export function enhancedMatrix(): number[] {
+  return [
+    1.3, 0,   0,   0, 0.02,
+    0,   1.3, 0,   0, 0.02,
+    0,   0,   1.3, 0, 0.02,
+    0,   0,   0,   1, 0,
+  ];
 }

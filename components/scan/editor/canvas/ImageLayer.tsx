@@ -12,8 +12,10 @@ import type { SharedValue } from "react-native-reanimated";
 import {
   brightnessMatrix,
   contrastMatrix,
+  filterMatrix,
   multiplyMatrices,
 } from "../utils/colorMatrices";
+import { FilterType } from "../../../../types/filter";
 
 interface ImageLayerProps {
   page: ScanImage;
@@ -28,6 +30,7 @@ interface ImageLayerProps {
 
   brightness: number;// <-- NEW
   contrast: number;
+  filter: FilterType;
 }
 
 export default function ImageLayer({
@@ -40,6 +43,7 @@ export default function ImageLayer({
   rotation,
   brightness,
    contrast,// <-- NEW
+  filter,
 }: ImageLayerProps) {
   const image = useImage(page.uri);
 
@@ -61,10 +65,12 @@ const centerY = y + height / 2;
 ]);
 
 const matrix = multiplyMatrices(
-  brightnessMatrix(brightness),
-  contrastMatrix(contrast)
+    filterMatrix(filter),
+    multiplyMatrices(
+        brightnessMatrix(brightness),
+        contrastMatrix(contrast)
+    )
 );
-
  if (!image) {
     return null;
   }
@@ -88,14 +94,3 @@ const matrix = multiplyMatrices(
 }
 
 
-/*    
-<Image
-  image={image}
-  x={x}
-  y={y}
-  width={width}
-  height={height}
->
-  <ColorMatrix matrix={matrix} />
-</Image>
-*/
