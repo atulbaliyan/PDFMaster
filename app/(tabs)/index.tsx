@@ -19,6 +19,10 @@ import PDFOptionsSheet from "../../components/home/PDFOptionsSheet";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { addPDF } from "../../services/storage/pdfStorage";
+import {
+  deletePDF,
+  renamePDF,
+} from "../../services/storage/pdfStorage";
 console.log("formatDate =", formatDate);
 
 
@@ -191,6 +195,7 @@ onCreateBlankPDF={() => {
       await sharePDF(selectedPDF.uri);
     }, 250);
   }}
+
   onDelete={() => {
   if (!selectedPDF) return;
 
@@ -208,13 +213,13 @@ onCreateBlankPDF={() => {
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => {
-            setPdfs((prev) =>
-              prev.filter(
-                (pdf) => pdf.id !== selectedPDF.id
-              )
-            );
-          },
+          onPress: async () => {
+  await deletePDF(selectedPDF.id);
+
+  const storedPDFs = await loadPDFs();
+
+  setPdfs(storedPDFs);
+},
         },
       ]
     );
@@ -231,25 +236,25 @@ onCreateBlankPDF={() => {
     setRenameVisible(false);
     setSelectedPDF(null);
   }}
-  onSave={(newName) => {
+  onSave={async (newName) => {
   if (!selectedPDF) return;
 
-  // Prevent empty names
   if (!newName.trim()) {
-    Alert.alert("Invalid Name", "PDF name cannot be empty.");
+    Alert.alert(
+      "Invalid Name",
+      "PDF name cannot be empty."
+    );
     return;
   }
 
-  setPdfs((prev) =>
-    prev.map((pdf) =>
-      pdf.id === selectedPDF.id
-        ? {
-            ...pdf,
-            name: newName.trim(),
-          }
-        : pdf
-    )
+  await renamePDF(
+    selectedPDF.id,
+    newName.trim()
   );
+
+  const storedPDFs = await loadPDFs();
+
+  setPdfs(storedPDFs);
 
   setRenameVisible(false);
   setSelectedPDF(null);
