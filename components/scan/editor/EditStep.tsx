@@ -4,12 +4,17 @@ import { ScanImage } from "../../../types/scan";
 import EditorHeader from "./EditorHeader";
 import ImageCanvas from "./ImageCanvas";
 import BottomToolbar from "./BottomToolbar";
-import { useState } from "react";
+
 import AdjustmentSlider from "./AdjustmentSlider";
 import EditorCanvas from "./canvas";
 import useEditorTransform from "./hooks/useEditorTransform";
 import { FilterType } from "../../../types/filter";
 import FilterPicker from "./FilterPicker";
+import {
+  useState,
+  useRef,
+} from "react";
+import type { EditorCanvasRef } from "./canvas/EditorCanvas";
 
 interface EditStepProps {
   page: ScanImage;
@@ -22,10 +27,11 @@ export default function EditStep({
   onSave,
   onCancel,
 }: EditStepProps) {
+  
  
   const [brightness, setBrightness] = useState(0);
   const [contrast, setContrast] = useState(0);
-  const [filter, setFilter] = useState<FilterType>("enhanced");
+  const [filter, setFilter] = useState<FilterType>("original");
 
   const [activeTool, setActiveTool] = useState<
   "rotate" | "filter" | "brightness" | "contrast" | null
@@ -36,18 +42,28 @@ const {
   translationY,
   rotation,
 } = useEditorTransform();
+const editorCanvasRef = useRef<EditorCanvasRef>(null);
  
 
   return (
     <View style={styles.container}>
 
-      <EditorHeader
-        title="Edit"
-        onBack={onCancel}
-        onSave={() => onSave(page)}
-      />
+   <EditorHeader
+  title="Edit"
+  onBack={onCancel}
+  onSave={async () => {
+    const uri = await editorCanvasRef.current?.saveImage();
 
-   <EditorCanvas
+    if (!uri) return;
+
+    onSave({
+      ...page,
+      uri,
+    });
+  }}
+/>
+  <EditorCanvas
+  ref={editorCanvasRef}
   page={page}
   zoom={zoom}
   translationX={translationX}
