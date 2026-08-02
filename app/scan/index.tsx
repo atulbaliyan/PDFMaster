@@ -12,6 +12,10 @@ import PagesStep from "../../components/scan/PagesStep";
 import { Alert } from "react-native";
 import { removePage } from "../../services/scan/scanSession";
 import EditStep from "../../components/scan/editor/EditStep";
+import { generatePdf } from "../../services/pdf/generatePdf";
+import { savePdf } from "../../services/pdf/savePdf";
+import { addPDF } from "../../services/storage/pdfStorage";
+import { router } from "expo-router";
 
 
 export default function ScanScreen() {
@@ -110,13 +114,51 @@ setStep("preview");
 {step === "pages" && (
  <PagesStep
   pages={scanImages}
+
+
+
   onAddPage={() => {
     setScanImage(null);
     setStep("camera");
   }}
-  onFinish={() => {
-    console.log("Document Finished ✅");
-  }}
+
+
+ onFinish={async () => {
+  try {
+    console.log("Generating PDF...");
+
+    const pdf = await generatePdf({
+      imageUris: scanImages.map((page) => page.uri),
+    });
+
+    console.log("PDF Generated");
+
+    const pdfFile = await savePdf(pdf);
+
+    console.log("PDF Saved:", pdfFile);
+
+    await addPDF(pdfFile);
+
+    console.log("Added to AsyncStorage");
+
+    // Reset scanner
+setScanImages([]);
+setScanImage(null);
+setSelectedPage(null);
+
+// Start from camera next time
+setStep("camera");
+
+// Navigate to Home
+router.replace("/(tabs)");
+
+  } catch (error) {
+    console.error("Create PDF Error:", error);
+  }
+}}
+
+
+
  onEditPage={(page) => {
   setSelectedPage(page);
   setStep("edit");
