@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PDFMaster",
+    "name": "PDF Master",
     "slug": "PDFMaster",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,15 +8,16 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.baliyan-2004.PDFMaster"
+      "bundleIdentifier": "com.baliyan2004.pdfmaster"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": 1,
       "predictiveBackGestureEnabled": false,
-      "package": "com.baliyan_2004.PDFMaster"
+      "package": "com.baliyan2004.pdfmaster"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -26,6 +27,12 @@
       "expo-font",
       "expo-sharing",
       "expo-status-bar"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "de1fc5a4-0f02-41bf-aacb-97fab7376815"
+      }
+    }
   }
 }
