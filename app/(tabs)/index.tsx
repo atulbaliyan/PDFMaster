@@ -19,10 +19,10 @@ import PDFOptionsSheet from "../../components/home/PDFOptionsSheet";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { addPDF } from "../../services/storage/pdfStorage";
-import {
-  deletePDF,
-  renamePDF,
-} from "../../services/storage/pdfStorage";
+import {deletePDF,renamePDF,} from "../../services/storage/pdfStorage";
+import { useAuth } from "../../contexts/AuthContext";
+import { capitalize } from "../../utils/capitalize";
+
 console.log("formatDate =", formatDate);
 
 
@@ -31,6 +31,12 @@ export default function HomeScreen() {
   const pdfOptionsSheetRef = useRef<BottomSheetModal>(null);
   const [pdfs, setPdfs] = useState<PDFFile[]>([]);
  
+  
+
+  const { user } = useAuth();
+
+const userName =
+  capitalize(user?.email?.split("@")[0] ?? "User");
  
   useFocusEffect(
   useCallback(() => {
@@ -83,7 +89,9 @@ console.log("Filtered:", filteredPDFs.map((p) => p.name));
   keyExtractor={(item) => item.id}
   ListHeaderComponent={
     <>
-      <HomeHeader userName="Atul" />
+      <HomeHeader
+  userName={userName}
+/>
 
       <SearchBar
   value={searchQuery}

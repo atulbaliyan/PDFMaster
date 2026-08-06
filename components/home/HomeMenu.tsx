@@ -11,8 +11,13 @@ export default function HomeMenu({
 }: HomeMenuProps) {
   if (!visible) return null;
 
-  return (
-    <View style={styles.container}>
+ return (
+  <Pressable
+    style={styles.container}
+    onPress={(event) => {
+      event.stopPropagation();
+    }}
+  >
       <Pressable
         style={styles.item}
         onPress={onLogout}
@@ -21,7 +26,7 @@ export default function HomeMenu({
           Logout
         </Text>
       </Pressable>
-    </View>
+    </Pressable>
   );
 }
 

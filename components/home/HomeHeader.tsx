@@ -11,7 +11,7 @@ import HomeMenu from "./HomeMenu";
 
 import { logout } from "../../services/auth/authService";
 import { router } from "expo-router";
-
+import { getGreeting } from "../../utils/getGreeting";
 interface HomeHeaderProps {
   userName: string;
 }
@@ -21,23 +21,33 @@ export default function HomeHeader({
 }: HomeHeaderProps) {
   const [menuVisible, setMenuVisible] = useState(false);
   return (
-  <View style={styles.container}>
+  <Pressable
+    style={{ flex: 1 }}
+    onPress={() => {
+      if (menuVisible) {
+        setMenuVisible(false);
+      }
+    }}
+  >
+    <View style={styles.container}>
     <View style={styles.topRow}>
       <View>
-        <Text style={styles.greeting}>
-          Good Evening 👋
-        </Text>
+       <Text style={styles.greeting}>
+  {getGreeting()} 👋
+</Text>
 
         <Text style={styles.name}>
           {userName}
         </Text>
       </View>
 
-      <Pressable
-        onPress={() =>
-          setMenuVisible(!menuVisible)
-        }
-      >
+     <Pressable
+  onPress={(event) => {
+    event.stopPropagation();
+
+    setMenuVisible(!menuVisible);
+  }}
+>
         <MaterialCommunityIcons
           name="dots-vertical"
           size={28}
@@ -64,7 +74,8 @@ export default function HomeHeader({
     }
   }}
 />
-  </View>
+     </View>
+  </Pressable>
 );
 }
 
