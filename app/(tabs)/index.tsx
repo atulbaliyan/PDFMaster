@@ -22,6 +22,7 @@ import { addPDF } from "../../services/storage/pdfStorage";
 import {deletePDF,renamePDF,} from "../../services/storage/pdfStorage";
 import { useAuth } from "../../contexts/AuthContext";
 import { capitalize } from "../../utils/capitalize";
+import { getUserName } from "../../utils/getUserName";
 
 console.log("formatDate =", formatDate);
 
@@ -35,8 +36,7 @@ export default function HomeScreen() {
 
   const { user } = useAuth();
 
-const userName =
-  capitalize(user?.email?.split("@")[0] ?? "User");
+const userName = getUserName(user?.email);
  
   useFocusEffect(
   useCallback(() => {
