@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "380247639102",
+    "project_id": "pdf-master-d4649",
+    "storage_bucket": "pdf-master-d4649.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380247639102:android:8d135fa880438026dfbd6f",
+        "android_client_info": {
+          "package_name": "com.baliyan2004.pdfmaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqNggslJnVuoCHCrWldqplFNtV_behJOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
