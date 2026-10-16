@@ -4,16 +4,16 @@ import {
   useState,
   ReactNode,
 } from "react";
-import { ScanPage } from "../types/scan";
+import type { ScanImage } from "../types/scan";
 
 interface ScanContextType {
-  pages: ScanPage[];
+  pages: ScanImage[];
 
-  addPage: (page: ScanPage) => void;
+  addPage: (page: ScanImage) => void;
 
   updatePage: (
     id: string,
-    updates: Partial<ScanPage>
+    updates: Partial<ScanImage>
   ) => void;
 
   deletePage: (id: string) => void;
@@ -30,15 +30,15 @@ export function ScanProvider({
 }: {
   children: ReactNode;
 }) {
-  const [pages, setPages] = useState<ScanPage[]>([]);
+  const [pages, setPages] = useState<ScanImage[]>([]);
 
-  function addPage(page: ScanPage) {
+  function addPage(page: ScanImage) {
     setPages((prev) => [...prev, page]);
   }
 
   function updatePage(
     id: string,
-    updates: Partial<ScanPage>
+    updates: Partial<ScanImage>
   ) {
     setPages((prev) =>
       prev.map((page) =>
